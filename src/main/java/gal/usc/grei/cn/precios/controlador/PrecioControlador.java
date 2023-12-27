@@ -1,7 +1,7 @@
-package gal.usc.grei.cn.controlador;
+package gal.usc.grei.cn.precios.controlador;
 
-import gal.usc.grei.cn.fachada.PrecioFachada;
-import gal.usc.grei.cn.modelo.Precio;
+import gal.usc.grei.cn.precios.fachada.PrecioFachada;
+import gal.usc.grei.cn.precios.modelo.Precio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

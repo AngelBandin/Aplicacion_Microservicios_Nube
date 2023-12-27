@@ -1,7 +1,7 @@
-package gal.usc.grei.cn.fachada;
+package gal.usc.grei.cn.precios.fachada;
 
-import gal.usc.grei.cn.modelo.Precio;
-import gal.usc.grei.cn.repositorio.PrecioRepositorio;
+import gal.usc.grei.cn.precios.modelo.Precio;
+import gal.usc.grei.cn.precios.repositorio.PrecioRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
