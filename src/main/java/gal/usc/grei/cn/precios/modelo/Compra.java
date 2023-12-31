@@ -21,9 +21,7 @@ public class Compra {
     private Float unidad;
     @NotNull(message = "El precio total no puede ser vacío")
     private Float total;
-    private String Estado;
-    private String metodoPago;
-    private String numeroTarjeta;
+
     public Compra() {
         // Constructor vacío necesario para Spring Data
     }
@@ -50,18 +48,6 @@ public class Compra {
 
     public Float getTotal() {
         return total;
-    }
-
-    public String getEstado() {
-        return Estado;
-    }
-
-    public String getMetodoPago() {
-        return metodoPago;
-    }
-
-    public String getNumeroTarjeta() {
-        return numeroTarjeta;
     }
 
     public Compra setId(String id) {
@@ -94,21 +80,6 @@ public class Compra {
         return this;
     }
 
-    public Compra setEstado(String estado) {
-        Estado = estado;
-        return this;
-    }
-
-    public Compra setMetodoPago(String metodoPago) {
-        this.metodoPago = metodoPago;
-        return this;
-    }
-
-    public Compra setNumeroTarjeta(String numeroTarjeta) {
-        this.numeroTarjeta = numeroTarjeta;
-        return this;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -119,11 +90,7 @@ public class Compra {
         if (!getSimbolo().equals(compra.getSimbolo())) return false;
         if (!getVolumen().equals(compra.getVolumen())) return false;
         if (!getUnidad().equals(compra.getUnidad())) return false;
-        if (!getTotal().equals(compra.getTotal())) return false;
-        if (getEstado() != null ? !getEstado().equals(compra.getEstado()) : compra.getEstado() != null) return false;
-        if (getMetodoPago() != null ? !getMetodoPago().equals(compra.getMetodoPago()) : compra.getMetodoPago() != null)
-            return false;
-        return getNumeroTarjeta() != null ? getNumeroTarjeta().equals(compra.getNumeroTarjeta()) : compra.getNumeroTarjeta() == null;
+        return getTotal().equals(compra.getTotal());
     }
 
     @Override
@@ -134,9 +101,6 @@ public class Compra {
         result = 31 * result + getVolumen().hashCode();
         result = 31 * result + getUnidad().hashCode();
         result = 31 * result + getTotal().hashCode();
-        result = 31 * result + (getEstado() != null ? getEstado().hashCode() : 0);
-        result = 31 * result + (getMetodoPago() != null ? getMetodoPago().hashCode() : 0);
-        result = 31 * result + (getNumeroTarjeta() != null ? getNumeroTarjeta().hashCode() : 0);
         return result;
     }
 }
