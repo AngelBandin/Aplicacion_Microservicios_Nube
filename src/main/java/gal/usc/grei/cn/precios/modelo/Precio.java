@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import java.util.Objects;
 
 
-@Component
+
 @Document(collection = "precios")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Precio {
@@ -22,17 +22,36 @@ public class Precio {
     private Float high;
     private Long volume;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Precio precio = (Precio) o;
-        return Objects.equals(id, precio.id) && Objects.equals(date, precio.date) && Objects.equals(symbol, precio.symbol) && Objects.equals(open, precio.open) && Objects.equals(close, precio.close) && Objects.equals(low, precio.low) && Objects.equals(high, precio.high) && Objects.equals(volume, precio.volume);
+    public String getId() {
+        return id;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, date, symbol, open, close, low, high, volume);
+    public String getDate() {
+        return date;
+    }
+
+    public String getSymbol() {
+        return symbol;
+    }
+
+    public Float getOpen() {
+        return open;
+    }
+
+    public Float getClose() {
+        return close;
+    }
+
+    public Float getLow() {
+        return low;
+    }
+
+    public Float getHigh() {
+        return high;
+    }
+
+    public Long getVolume() {
+        return volume;
     }
 
     public Precio setId(String id) {
@@ -76,16 +95,30 @@ public class Precio {
     }
 
     @Override
-    public String toString() {
-        return "Precio{" +
-                "id='" + id + '\'' +
-                ", date='" + date + '\'' +
-                ", symbol='" + symbol + '\'' +
-                ", open=" + open +
-                ", close=" + close +
-                ", low=" + low +
-                ", high=" + high +
-                ", volume=" + volume +
-                '}';
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Precio precio)) return false;
+
+        if (!getId().equals(precio.getId())) return false;
+        if (!getDate().equals(precio.getDate())) return false;
+        if (!getSymbol().equals(precio.getSymbol())) return false;
+        if (!getOpen().equals(precio.getOpen())) return false;
+        if (!getClose().equals(precio.getClose())) return false;
+        if (!getLow().equals(precio.getLow())) return false;
+        if (!getHigh().equals(precio.getHigh())) return false;
+        return getVolume().equals(precio.getVolume());
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getId().hashCode();
+        result = 31 * result + getDate().hashCode();
+        result = 31 * result + getSymbol().hashCode();
+        result = 31 * result + getOpen().hashCode();
+        result = 31 * result + getClose().hashCode();
+        result = 31 * result + getLow().hashCode();
+        result = 31 * result + getHigh().hashCode();
+        result = 31 * result + getVolume().hashCode();
+        return result;
     }
 }
