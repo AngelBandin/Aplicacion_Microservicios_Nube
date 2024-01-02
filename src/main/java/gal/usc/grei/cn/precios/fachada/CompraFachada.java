@@ -45,7 +45,7 @@ public class CompraFachada {
                     return Optional.of(compras.insert(compra));
                 } else {
                     compra.setEstado("fallido");
-                    return Optional.empty();
+                    return Optional.of(compras.insert(compra));
                 }
             }
             else {
