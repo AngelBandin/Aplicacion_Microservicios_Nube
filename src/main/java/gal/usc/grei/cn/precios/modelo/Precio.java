@@ -3,9 +3,6 @@ package gal.usc.grei.cn.precios.modelo;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.stereotype.Component;
-
-import java.util.Objects;
 
 
 
@@ -120,5 +117,19 @@ public class Precio {
         result = 31 * result + getHigh().hashCode();
         result = 31 * result + getVolume().hashCode();
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Precio{" +
+                "id='" + id + '\'' +
+                ", date='" + date + '\'' +
+                ", symbol='" + symbol + '\'' +
+                ", open=" + open +
+                ", close=" + close +
+                ", low=" + low +
+                ", high=" + high +
+                ", volume=" + volume +
+                '}';
     }
 }

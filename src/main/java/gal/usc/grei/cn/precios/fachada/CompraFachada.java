@@ -2,7 +2,10 @@ package gal.usc.grei.cn.precios.fachada;
 
 import gal.usc.grei.cn.precios.modelo.Compra;
 import gal.usc.grei.cn.precios.repositorio.CompraRepositorio;
+import gal.usc.grei.cn.precios.servicio.ServicioPago;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -10,12 +13,15 @@ import java.util.Optional;
 public class CompraFachada {
 
     private final CompraRepositorio compras;
+    private final ServicioPago servicioPago;
     /*
      * Constructor de la clase
      * @param compras Referencia al CompraRepositorio
      */
-    public CompraFachada(CompraRepositorio compras) {
+    @Autowired
+    public CompraFachada(CompraRepositorio compras, ServicioPago servicioPago) {
         this.compras = compras;
+        this.servicioPago = servicioPago;
     }
     public Optional<Compra> get(String id) {
 // Se recupera la compra por el id
@@ -28,12 +34,29 @@ public class CompraFachada {
      * @throws ResponseStatusException Excepción lanzada en caso de que se facilite alguna
     información incorrecta.
      */
+    @Transactional
     public Optional<Compra> create(Compra compra) {
 //Comprobamos que la película haya llegado sin un id:
-        if(compra.getId() == null || compra.getId().isEmpty()) {
-//Si es así, se devuelve un optional con los datos de la película insertada.
-            return Optional.of(compras.insert(compra));
+        try {
+            // Intentar procesar el pago
+            if (compra.getId() == null || compra.getId().isEmpty()){
+                if(servicioPago.procesarPago(compra)) {
+                    compra.setEstado("pagado");
+                    return Optional.of(compras.insert(compra));
+                } else {
+                    compra.setEstado("fallido");
+                    return Optional.empty();
+                }
+            }
+            else {
+                return Optional.empty();
+            }
+
+        } catch (Exception e) {
+            // Manejar excepciones y establecer el estado de la orden en caso de error
+            compra.setEstado("error_procesamiento");
+            // Puedes registrar la excepción o realizar otras acciones necesarias.
+            throw new RuntimeException("Error al procesar la compra", e);
         }
-        return Optional.empty();
     }
 }

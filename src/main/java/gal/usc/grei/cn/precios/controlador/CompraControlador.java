@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -38,25 +37,28 @@ public class CompraControlador {
      * @param compra los datos de la compra a insertar
      * @return Si la inserción se ha podido hacer, la nueva compra y la URL para acceder a ella.
      */
+
     @PostMapping(
             produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<Object> create(@Valid @RequestBody Compra compra) {
         try {
-            // Tratamos de crear la compra:
             Optional<Compra> inserted = compras.create(compra);
 
-            // Si se crea correctamente, devolvemos la información de la compra creada.
-            return ResponseEntity.created(URI.create(
+            // Manejo explícito para el caso de Optional.empty()
+            return inserted.<ResponseEntity<Object>>map(value -> ResponseEntity.created(URI.create(
                             ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString() +
-                                    "/compras/" + inserted.get().getId()))
-                    .body(inserted.get());
-        } catch (ResponseStatusException e) {
-            // Si se captura una excepción de estado de respuesta, devolvemos una respuesta personalizada.
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+                                    "/compras/" + value.getId()))
+                    .body(value)).orElseGet(() -> ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("La compra no pudo ser procesada correctamente."));
+        } catch (Exception e) {
+            // Manejar otras excepciones si es necesario
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error interno al procesar la compra.");
         }
     }
+
 
     // Puedes agregar el método GET aquí si es necesario
 }
