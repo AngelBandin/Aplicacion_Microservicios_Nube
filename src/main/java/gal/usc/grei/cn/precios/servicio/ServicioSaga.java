@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Transactional
+
 @Service
 public class ServicioSaga {
 
@@ -18,11 +18,13 @@ public class ServicioSaga {
         this.servicioReserva = servicioReserva;
         this.servicioPago = servicioPago;
     }
-
+    @Transactional
     public Compra procesarTransaccion(Compra compra) throws RuntimeException{
         // Llamada a métodos de ServicioReserva
-        servicioReserva.procesarReserva(compra);
-
+        if(!servicioReserva.procesarReserva(compra)){
+            compra.setEstado("no disponible");
+            return compra;
+        }
         // Llamada a métodos de ServicioPago
         return servicioPago.procesarPago(compra);
     }
