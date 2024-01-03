@@ -1,6 +1,7 @@
 package gal.usc.grei.cn.precios.modelo;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public class ErrorResponse {
     private final LocalDateTime timestamp;
@@ -35,5 +36,17 @@ public class ErrorResponse {
 
     public String getPath() {
         return path;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ErrorResponse that)) return false;
+        return getStatus() == that.getStatus() && Objects.equals(getTimestamp(), that.getTimestamp()) && Objects.equals(getError(), that.getError()) && Objects.equals(getMessage(), that.getMessage()) && Objects.equals(getPath(), that.getPath());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getTimestamp(), getStatus(), getError(), getMessage(), getPath());
     }
 }

@@ -35,30 +35,26 @@ public class CompraFachada {
     información incorrecta.
      */
     @Transactional
-    public Optional<Compra> create(Compra compra) {
+    public Optional<Compra> create(Compra compra) throws RuntimeException{
 
         try {
             // Intentar procesar el pago
             //Comprobamos que la película haya llegado sin un id:
-            if ((compra.getId() == null || compra.getId().isEmpty()) && compra.getNumeroTarjeta().length()==19){
+            if ((compra.getId() == null || compra.getId().isEmpty()) && ( !compra.getMetodoPago().equals("Tarjeta de credito")||
+                    compra.getNumeroTarjeta().length()==19)){
                 if(servicioPago.procesarPago(compra)) {
                     compra.setEstado("pagado");
-                    return Optional.of(compras.insert(compra));
                 } else {
                     compra.setEstado("fallido");
-                    return Optional.of(compras.insert(compra));
                 }
+                return Optional.of(compras.insert(compra));
             }
             else {
                 return Optional.empty();
             }
 
         } catch (Exception e) {
-            // Manejar excepciones y establecer el estado de la orden en caso de error
-            compra.setEstado("error_procesamiento");
-            return Optional.of(compras.insert(compra));
-            // Puedes registrar la excepción o realizar otras acciones necesarias.
-            //throw new RuntimeException("Error al procesar la compra", e);
+            throw new RuntimeException("Error Interno al procesar la Compra", e);
         }
     }
 }

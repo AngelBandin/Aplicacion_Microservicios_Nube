@@ -24,6 +24,7 @@ public class Compra {
     @NotNull(message = "El precio total no puede ser vacío")
     private Float total;
     private String Estado;
+    @NotEmpty(message = "El método de pago no puede estar Vacio")
     private String metodoPago;
     private String numeroTarjeta;
     public Compra() {
