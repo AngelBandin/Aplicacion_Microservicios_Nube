@@ -2,7 +2,8 @@ package gal.usc.grei.cn.precios.fachada;
 
 import gal.usc.grei.cn.precios.modelo.Compra;
 import gal.usc.grei.cn.precios.repositorio.CompraRepositorio;
-import gal.usc.grei.cn.precios.servicio.ServicioPago;
+import gal.usc.grei.cn.precios.repositorio.PrecioRepositorio;
+import gal.usc.grei.cn.precios.servicio.ServicioSaga;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,15 +14,18 @@ import java.util.Optional;
 public class CompraFachada {
 
     private final CompraRepositorio compras;
-    private final ServicioPago servicioPago;
+
+    private final ServicioSaga servicioSaga;
+    private final PrecioRepositorio precios;
     /*
      * Constructor de la clase
      * @param compras Referencia al CompraRepositorio
      */
     @Autowired
-    public CompraFachada(CompraRepositorio compras, ServicioPago servicioPago) {
+    public CompraFachada(CompraRepositorio compras,ServicioSaga servicioSaga, PrecioRepositorio precios) {
         this.compras = compras;
-        this.servicioPago = servicioPago;
+        this.servicioSaga = servicioSaga;
+        this.precios = precios;
     }
     public Optional<Compra> get(String id) {
 // Se recupera la compra por el id
@@ -37,7 +41,7 @@ public class CompraFachada {
     @Transactional
     public Optional<Compra> create(Compra compra) throws RuntimeException{
 
-        compra = servicioPago.procesarPago(compra);
+        compra = servicioSaga.procesarTransaccion(compra);
         if(!compra.getEstado().equals("Bad Request")) return Optional.of(compras.insert(compra));
         else return Optional.empty();
 
