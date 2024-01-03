@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.Objects;
 
 
-@Document(collection = "precios")
+@Document(collection = "compras")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Compra {
     @Id
