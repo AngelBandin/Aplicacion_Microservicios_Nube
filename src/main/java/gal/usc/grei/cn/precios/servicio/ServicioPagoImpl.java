@@ -23,7 +23,6 @@ public class ServicioPagoImpl implements ServicioPago {
             throw new RuntimeException("Error Interno al procesar la Compra", e);
         }
     }
-
     @Override
     public boolean simularPago(Compra compra){
         // Lógica para procesar el pago

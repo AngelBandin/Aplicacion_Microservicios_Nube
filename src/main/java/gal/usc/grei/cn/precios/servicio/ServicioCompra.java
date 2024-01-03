@@ -8,13 +8,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
-public class ServicioSaga {
+public class ServicioCompra {
 
     private final ServicioReserva servicioReserva;
     private final ServicioPago servicioPago;
 
 @Autowired
-    public ServicioSaga(ServicioReserva servicioReserva, ServicioPago servicioPago) {
+    public ServicioCompra(ServicioReserva servicioReserva, ServicioPago servicioPago) {
         this.servicioReserva = servicioReserva;
         this.servicioPago = servicioPago;
     }
@@ -28,8 +28,6 @@ public class ServicioSaga {
         // Llamada a métodos de ServicioPago
         return servicioPago.procesarPago(compra);
     }
-
-    // Otros métodos...
 }
 
 

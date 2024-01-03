@@ -3,7 +3,7 @@ package gal.usc.grei.cn.precios.fachada;
 import gal.usc.grei.cn.precios.modelo.Compra;
 import gal.usc.grei.cn.precios.repositorio.CompraRepositorio;
 import gal.usc.grei.cn.precios.repositorio.PrecioRepositorio;
-import gal.usc.grei.cn.precios.servicio.ServicioSaga;
+import gal.usc.grei.cn.precios.servicio.ServicioCompra;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,16 +15,16 @@ public class CompraFachada {
 
     private final CompraRepositorio compras;
 
-    private final ServicioSaga servicioSaga;
+    private final ServicioCompra servicioCompra;
     private final PrecioRepositorio precios;
     /*
      * Constructor de la clase
      * @param compras Referencia al CompraRepositorio
      */
     @Autowired
-    public CompraFachada(CompraRepositorio compras,ServicioSaga servicioSaga, PrecioRepositorio precios) {
+    public CompraFachada(CompraRepositorio compras, ServicioCompra servicioCompra, PrecioRepositorio precios) {
         this.compras = compras;
-        this.servicioSaga = servicioSaga;
+        this.servicioCompra = servicioCompra;
         this.precios = precios;
     }
     public Optional<Compra> get(String id) {
@@ -41,7 +41,7 @@ public class CompraFachada {
     @Transactional
     public Optional<Compra> create(Compra compra) throws RuntimeException{
 
-        compra = servicioSaga.procesarTransaccion(compra);
+        compra = servicioCompra.procesarTransaccion(compra);
         if(!compra.getEstado().equals("Bad Request")) return Optional.of(compras.insert(compra));
         else return Optional.empty();
 
