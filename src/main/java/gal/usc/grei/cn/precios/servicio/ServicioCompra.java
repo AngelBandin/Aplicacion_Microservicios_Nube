@@ -21,7 +21,6 @@ public class ServicioCompra {
     @Transactional
     public Compra procesarTransaccion(Compra compra) throws RuntimeException{
         // Llamada a métodos de ServicioReserva
-        if (!(compra.getId() == null || compra.getId().isEmpty())) throw new RuntimeException("Error Interno al procesar la Compra");
         if(!servicioReserva.procesarReserva(compra)){
             compra.setEstado("no disponible");
             return compra;

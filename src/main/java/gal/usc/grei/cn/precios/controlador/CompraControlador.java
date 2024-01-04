@@ -46,37 +46,72 @@ public class CompraControlador {
             consumes = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<Object> create(@Valid @RequestBody Compra compra) {
+        ErrorResponse errorResponse;
         try {
             Optional<Compra> inserted = compras.create(compra);
 
             // Manejo explícito para el caso de Optional.empty()
+
             if (inserted.isPresent()) {
-                return ResponseEntity.created(URI.create(
-                                ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString() +
-                                        "/compras/" + inserted.get().getId()))
-                        .body(inserted.get());
+                return switch (inserted.get().getEstado()) {
+                    case "pagado" -> ResponseEntity.created(URI.create(
+                                    ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString() +
+                                            "/compras/" + inserted.get().getId()))
+                            .body(inserted.get());
+                    case "fallido" -> {
+                        errorResponse = new ErrorResponse(
+                                LocalDateTime.now(),
+                                HttpStatus.UNPROCESSABLE_ENTITY.value(),
+                                HttpStatus.UNPROCESSABLE_ENTITY.getReasonPhrase(),
+                                "Error en el tramite bancario",
+                                "/compras"
+                        );
+                        yield ResponseEntity.status(errorResponse.getStatus()).body(errorResponse);
+                    }
+                    case "Bad Request" -> {
+                        errorResponse = new ErrorResponse(
+                                LocalDateTime.now(),
+                                HttpStatus.BAD_REQUEST.value(),
+                                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                                "Error en la solicitud de compra.",
+                                "/compras"
+                        );
+                        yield ResponseEntity.status(errorResponse.getStatus()).body(errorResponse);
+                    }
+                    case "no disponible" -> {
+                        errorResponse = new ErrorResponse(
+                                LocalDateTime.now(),
+                                HttpStatus.NO_CONTENT.value(),
+                                HttpStatus.NO_CONTENT.getReasonPhrase(),
+                                "Acción buscada no disponible.",
+                                "/compras"
+                        );
+                        yield ResponseEntity.status(errorResponse.getStatus()).body(errorResponse);
+                    }
+                    default -> throw new RuntimeException();
+                };
+
             } else {
-                // Manejo explícito para el caso de Optional.empty()
-                ErrorResponse errorResponse = new ErrorResponse(
+                // Manejar otras excepciones si es necesario
+                errorResponse = new ErrorResponse(
                         LocalDateTime.now(),
-                        HttpStatus.BAD_REQUEST.value(),
-                        HttpStatus.BAD_REQUEST.getReasonPhrase(),
-                        "Error en la solicitud de compra.",
+                        HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                        HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
+                        "Error interno al procesar la compra.",
                         "/compras"
                 );
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+                return ResponseEntity.status(errorResponse.getStatus()).body(errorResponse);
             }
         } catch (Exception e) {
             // Manejar otras excepciones si es necesario
-            ErrorResponse errorResponse = new ErrorResponse(
+            errorResponse = new ErrorResponse(
                     LocalDateTime.now(),
                     HttpStatus.INTERNAL_SERVER_ERROR.value(),
                     HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
                     "Error interno al procesar la compra.",
                     "/compras"
             );
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
-
+            return ResponseEntity.status(errorResponse.getStatus()).body(errorResponse);
         }
     }
 

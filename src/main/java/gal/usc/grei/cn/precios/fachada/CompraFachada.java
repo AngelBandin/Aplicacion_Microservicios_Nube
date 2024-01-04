@@ -38,15 +38,14 @@ public class CompraFachada {
      */
     @Transactional
     public Optional<Compra> create(Compra compra) throws RuntimeException{
-
+        if (!(compra.getId() == null || compra.getId().isEmpty())) return Optional.empty();
         //compra = servicioCompra.procesarTransaccion(compra);
         String servicioCompraUrl = "http://localhost:8081/Servicios/realizarCompra";
         compra = restTemplate.postForObject(servicioCompraUrl, compra, Compra.class);
-
         // Procesar la respuesta como sea necesario
-        if (compra == null) throw new RuntimeException("Error Interno al procesar la Compra");
-        if(!compra.getEstado().equals("Bad Request")) return Optional.of(compras.insert(compra));
-        return Optional.empty();
+        if (compra == null) return Optional.empty();
+        if(compra.getEstado().equals("pagado")) return Optional.of(compras.insert(compra));
+        return Optional.of(compra);
 
     }
 }
