@@ -9,7 +9,7 @@ public class ServicioPagoImpl implements ServicioPago {
     @Override
     public Compra procesarPago(Compra compra) throws RuntimeException{
         try {
-            if ((compra.getId() == null || compra.getId().isEmpty()) && ( !compra.getMetodoPago().equals("Tarjeta de credito")||
+            if (( !compra.getMetodoPago().equals("Tarjeta de credito")||
                     compra.getNumeroTarjeta().length()==19)){
                 if(this.simularPago(compra)) {
                     compra.setEstado("pagado");

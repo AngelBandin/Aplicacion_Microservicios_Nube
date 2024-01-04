@@ -2,11 +2,10 @@ package gal.usc.grei.cn.precios.fachada;
 
 import gal.usc.grei.cn.precios.modelo.Compra;
 import gal.usc.grei.cn.precios.repositorio.CompraRepositorio;
-import gal.usc.grei.cn.precios.repositorio.PrecioRepositorio;
-import gal.usc.grei.cn.precios.servicio.ServicioCompra;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Optional;
 
@@ -15,17 +14,16 @@ public class CompraFachada {
 
     private final CompraRepositorio compras;
 
-    private final ServicioCompra servicioCompra;
-    private final PrecioRepositorio precios;
+
+    @Autowired
+    private RestTemplate restTemplate;
     /*
      * Constructor de la clase
      * @param compras Referencia al CompraRepositorio
      */
     @Autowired
-    public CompraFachada(CompraRepositorio compras, ServicioCompra servicioCompra, PrecioRepositorio precios) {
+    public CompraFachada(CompraRepositorio compras) {
         this.compras = compras;
-        this.servicioCompra = servicioCompra;
-        this.precios = precios;
     }
     public Optional<Compra> get(String id) {
 // Se recupera la compra por el id
@@ -38,12 +36,19 @@ public class CompraFachada {
      * @throws ResponseStatusException Excepción lanzada en caso de que se facilite alguna
     información incorrecta.
      */
+
+
     @Transactional
     public Optional<Compra> create(Compra compra) throws RuntimeException{
 
-        compra = servicioCompra.procesarTransaccion(compra);
+        //compra = servicioCompra.procesarTransaccion(compra);
+        String servicioCompraUrl = "http://localhost:8081/Servicios/realizarCompra";
+        compra = restTemplate.postForObject(servicioCompraUrl, compra, Compra.class);
+
+        // Procesar la respuesta como sea necesario
+        if (compra == null) throw new RuntimeException("Error Interno al procesar la Compra");
         if(!compra.getEstado().equals("Bad Request")) return Optional.of(compras.insert(compra));
-        else return Optional.empty();
+        return Optional.empty();
 
     }
 }
