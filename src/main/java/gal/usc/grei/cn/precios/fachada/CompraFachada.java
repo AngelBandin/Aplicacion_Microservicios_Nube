@@ -36,8 +36,6 @@ public class CompraFachada {
      * @throws ResponseStatusException Excepción lanzada en caso de que se facilite alguna
     información incorrecta.
      */
-
-
     @Transactional
     public Optional<Compra> create(Compra compra) throws RuntimeException{
 
